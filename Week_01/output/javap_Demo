@@ -1,0 +1,72 @@
+Classfile /Users/hongweixu/Desktop/极客大学-Java进阶学习/JAVA-000/Week_01/snippet/demo/jvm01/Demo.class
+  Last modified 2020-10-18; size 384 bytes
+  MD5 checksum fe732dcc6e8f987d36c2bb49a37f5417
+  Compiled from "Demo.java"
+public class demo.jvm01.Demo
+  minor version: 0
+  major version: 52
+  flags: ACC_PUBLIC, ACC_SUPER
+Constant pool:
+   #1 = Methodref          #3.#18         // java/lang/Object."<init>":()V
+   #2 = Class              #19            // demo/jvm01/Demo
+   #3 = Class              #20            // java/lang/Object
+   #4 = Utf8               <init>
+   #5 = Utf8               ()V
+   #6 = Utf8               Code
+   #7 = Utf8               LineNumberTable
+   #8 = Utf8               LocalVariableTable
+   #9 = Utf8               this
+  #10 = Utf8               Ldemo/jvm01/Demo;
+  #11 = Utf8               foo
+  #12 = Utf8               a
+  #13 = Utf8               I
+  #14 = Utf8               b
+  #15 = Utf8               c
+  #16 = Utf8               SourceFile
+  #17 = Utf8               Demo.java
+  #18 = NameAndType        #4:#5          // "<init>":()V
+  #19 = Utf8               demo/jvm01/Demo
+  #20 = Utf8               java/lang/Object
+{
+  public demo.jvm01.Demo();
+    descriptor: ()V
+    flags: ACC_PUBLIC
+    Code:
+      stack=1, locals=1, args_size=1
+         0: aload_0
+         1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+         4: return
+      LineNumberTable:
+        line 7: 0
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            0       5     0  this   Ldemo/jvm01/Demo;
+
+  public static void foo();
+    descriptor: ()V
+    flags: ACC_PUBLIC, ACC_STATIC
+    Code:
+      stack=2, locals=3, args_size=0
+         0: sipush        1000
+         3: istore_0
+         4: iconst_2
+         5: istore_1
+         6: iload_0
+         7: iload_1
+         8: iadd
+         9: sipush        512
+        12: imul
+        13: istore_2
+        14: return
+      LineNumberTable:
+        line 9: 0
+        line 10: 4
+        line 11: 6
+        line 12: 14
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            4      11     0     a   I
+            6       9     1     b   I
+           14       1     2     c   I
+}
+SourceFile: "Demo.java"
