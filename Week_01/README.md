@@ -13,7 +13,7 @@
   执行方法
   
 ```bash
- cd Week_01/
+ cd Week_01/homework
  javac src/HelloCustomClassLoader.java
  javap java -cp ./src/ HelloCustomClassLoader
 ```
