@@ -1,7 +1,7 @@
 学习笔记
 ===
 
-![JVM 进阶梳理](https://raw.githubusercontent.com/xhwSkhizein/JAVA-000/main/Week_01/static/JVM\350\277\233\351\230\266.png)
+![JVM 进阶梳理](https://github.com/xhwSkhizein/JAVA-000/raw/main/Week_01/static/JVM%E8%BF%9B%E9%98%B6.png)
 
 ---
 
