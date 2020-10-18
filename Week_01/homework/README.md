@@ -12,4 +12,4 @@
 #### 2. 画一张图，展示 Xmx、Xms、Xmn、Meta、DirectMemory、Xss 这些内存参数的 关系
  
 
-![JVM Memory](../../static/jvm_memory.png)
+![JVM Memory](https://raw.githubusercontent.com/xhwSkhizein/JAVA-000/main/Week_01/static/jvm_memory.png)
