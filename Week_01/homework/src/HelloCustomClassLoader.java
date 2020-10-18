@@ -1,5 +1,3 @@
-package Hello;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -18,9 +16,7 @@ public class HelloCustomClassLoader extends ClassLoader {
     @Override
     protected Class<?> findClass(String name) {
         String workDir = System.getProperty("user.dir");
-        String encryptClassFile = workDir + "/Week_01/homework/src/Hello/Hello.xlass";
-        System.out.println(encryptClassFile);
-
+        String encryptClassFile = workDir + "/src/Hello.xlass";
         File file = new File(encryptClassFile);
         try (InputStream is = new FileInputStream(file)) {
             byte[] buffer = new byte[is.available()];
