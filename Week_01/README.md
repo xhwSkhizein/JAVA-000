@@ -11,7 +11,9 @@
 #### 1. 自定义类加载器加载 Hello.xlass 并执行其hello方法
 
   执行方法
+  
 ```bash
+ cd Week_01/
  javac src/HelloCustomClassLoader.java
  javap java -cp ./src/ HelloCustomClassLoader
 ```
