@@ -3,12 +3,12 @@
 
 ### 随机对象创建程序在不同垃圾回收器下的表现与分析
 
-0. 不同 `Xmx` 对GC的影响
+#### 0. 不同 `Xmx` 对GC的影响
 
 * 较大一些的 `Xmx` 可以降低GC次数
 * 降低OOM发生的概率
 
-测试统计表
+#### 测试统计表
 
 |GC|Xmx|Result|分析|
 |----|-----|-----|-----|
@@ -34,6 +34,142 @@
 |G1|4g|11750 | 更适合大堆 | 
 
 
+gateway-server test
+---
+
+### SerialGC
+
+*  java -jar -Xms2g -Xmx2g -XX:+UseSerialGC gateway-server-0.0.1-SNAPSHOT.jar
+> $ wrk -t8 -c40 -d60s http://localhost:8088/api/hello
+
+`
+Running 1m test @ http://localhost:8088/api/hello
+  8 threads and 40 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     5.46ms   20.56ms 332.74ms   94.29%
+    Req/Sec     5.28k     1.86k   13.14k    78.68%
+  2473910 requests in 1.00m, 295.36MB read
+Requests/sec:  41162.76
+Transfer/sec:      4.91MB
+`
+
+*  java -jar -Xms512m -Xmx512m -XX:+UseSerialGC gateway-server-0.0.1-SNAPSHOT.jar
+> wrk -t8 -c40 -d60s http://localhost:8088/api/hello
+
+`
+Running 1m test @ http://localhost:8088/api/hello
+  8 threads and 40 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     4.87ms   15.98ms 259.39ms   93.91%
+    Req/Sec     4.63k     1.74k    9.87k    63.80%
+  2204654 requests in 1.00m, 263.21MB read
+Requests/sec:  36690.33
+Transfer/sec:      4.38MB
+`
+
+现象： 堆内存变小后，latency变好了，吞吐降低了
+
+
+### ParallelGC
+
+* java -jar -Xms2g -Xmx2g -XX:+UseParallelGC gateway-server-0.0.1-SNAPSHOT.jar
+
+> wrk -t8 -c40 -d60s http://localhost:8088/api/hello
+
+`
+Running 1m test @ http://localhost:8088/api/hello
+  8 threads and 40 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     4.95ms   17.29ms 297.98ms   93.98%
+    Req/Sec     5.64k     2.01k   14.04k    79.10%
+  2516082 requests in 1.00m, 300.40MB read
+Requests/sec:  41870.72
+Transfer/sec:      5.00MB
+`
+
+现象：相比于SerialGC 有更高的吞吐量，更低的延时
+
+### CMS
+
+* java -jar -Xms2g -Xmx2g -XX:+UseConcMarkSweepGC gateway-server-0.0.1-SNAPSHOT.jar
+
+> wrk -t8 -c40 -d60s http://localhost:8088/api/hello
+
+`
+Running 1m test @ http://localhost:8088/api/hello
+  8 threads and 40 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     5.38ms   25.04ms 877.96ms   95.08%
+    Req/Sec     4.62k     1.80k   10.24k    64.56%
+  2176591 requests in 1.00m, 259.86MB read
+Requests/sec:  36223.39
+Transfer/sec:      4.32MB
+`
+
+现象： 相比于ParallelGC， 默认配置的CMS吞吐和延迟都要更差一些
+
+
+### G1
+
+* java -jar -Xms2g -Xmx2g -XX:+UseG1GC gateway-server-0.0.1-SNAPSHOT.jar
+
+> wrk -t8 -c40 -d60s http://localhost:8088/api/hello
+
+`
+Running 1m test @ http://localhost:8088/api/hello
+  8 threads and 40 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     5.96ms   19.73ms 280.90ms   93.41%
+    Req/Sec     4.89k     1.79k   10.07k    75.57%
+  2326579 requests in 1.00m, 277.77MB read
+Requests/sec:  38719.23
+Transfer/sec:      4.62MB
+`
+
+现象： 吞吐延迟略好于默认配置的CMS，差于ParallelGC
+
+
+### 提高堆内存到8G 对比 ParallelGC/CMS/G1
+
+* java -jar -Xms8g -Xmx8g -XX:+UseG1GC gateway-server-0.0.1-SNAPSHOT.jar
+
+#### ParallelGC 表现与2g时 有所下降
+`
+Running 1m test @ http://localhost:8088/api/hello
+  8 threads and 40 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     3.99ms   16.84ms 269.50ms   95.75%
+    Req/Sec     5.51k     2.09k   16.38k    78.92%
+  2368654 requests in 1.00m, 282.79MB read
+Requests/sec:  39416.15
+Transfer/sec:      4.71MB
+`
+
+#### CMS 表现与2g时 稍微有所提升
+`
+Running 1m test @ http://localhost:8088/api/hello
+  8 threads and 40 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     5.40ms   17.35ms 278.73ms   93.84%
+    Req/Sec     4.76k     1.73k   10.14k    66.56%
+  2263958 requests in 1.00m, 270.29MB read
+Requests/sec:  37677.72
+Transfer/sec:      4.50MB
+`
+
+#### G1 表现与2g时 稍微有所下降
+`
+Running 1m test @ http://localhost:8088/api/hello
+  8 threads and 40 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     5.85ms   19.03ms 339.61ms   93.47%
+    Req/Sec     4.76k     1.99k   10.19k    65.47%
+  2265965 requests in 1.00m, 270.53MB read
+Requests/sec:  37711.78
+Transfer/sec:      4.50MB
+`
+
+------
 
 
 1. SerialGC
